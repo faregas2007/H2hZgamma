@@ -11,7 +11,7 @@ data["f1H"]
 
 ## Reference
 
-Decay of CP-even Higgs $H \rightarrow h \gamma \gamma $ in Two Higgs Doublet Model: one-loop analytic results, ward identity checks, [arxiv:2406.15749](https://arxiv.org/abs/2406.15749)
+Decay of CP-even Higgs $H \rightarrow h \gamma \gamma$ in Two Higgs Doublet Model: one-loop analytic results, ward identity checks, [arxiv:2406.15749](https://arxiv.org/abs/2406.15749)
 
 Prospects for detecting the rare heavy Higgs decay $H \rightarrow h\gamma \gamma$ through the $H \rightarrow b¯ b\gamma \gamma$ channel at the 
 LHC, [arxiv:2411.19170v2](https://arxiv.org/html/2411.19170v2)
