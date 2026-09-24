@@ -44,11 +44,11 @@ inverseG =(Inverse[GphysD/.variables2/.{a^2 (D-3)y -> -a^2 y + a^2(D-2)y}/.varia
 
 
 pvec[\[Mu]_,\[Nu]_, m_] := (PList[\[Rho], \[Sigma]][[m]] PZ[\[Mu],\[Rho]] PG[\[Nu], \[Sigma]]//Contract)/.variables//Simplify
-\[CapitalPi]vec[\[Mu]_,\[Nu]_]:= Table[Bvec[\[Mu],\[Nu], i], {i,3}]
+\[CapitalPi]vec[\[Mu]_,\[Nu]_]:= Table[pvec[\[Mu],\[Nu], i], {i,3}]
 
 
 (* Dual projector *)
-Proj[\[Mu]_,\[Nu]_] := inverseG . bvec[\[Mu],\[Nu]]
+Proj[\[Mu]_,\[Nu]_] := inverseG . \[CapitalPi]vec[\[Mu],\[Nu]]
 
 
 (* Sanity check if Proj amp_i = F_i *)
