@@ -9,12 +9,19 @@ Pair[Momentum[k3, D], Momentum[k2, D]]-> b,
 Pair[Momentum[k1, D], Momentum[k2, D]]-> c,
 Pair[Momentum[k1, D], Momentum[k1, D]]-> x,
 Pair[Momentum[k2, D], Momentum[k2, D]]-> y,
-Pair[Momentum[k3, D], Momentum[k3, D]]-> 0
+Pair[Momentum[k3, D], Momentum[k3, D]]-> 0,
+Pair[Momentum[k1 + k3, D], Momentum[k1 + k3, D]]-> x + 2 a,
+Pair[Momentum[k1 + k2, D], Momentum[k1 + k2, D]]-> x + 2 c + y,
+Pair[Momentum[k2 + k3, D], Momentum[k2 + k3, D]]-> y + 2 b
 };
 
 variables2 = {
+Subscript[m, h0]-> Sqrt[x],
 Subscript[m, h]-> Sqrt[x],
 Subscript[m, Z]-> Sqrt[y],
+mZ-> Sqrt[y],
+mh-> Sqrt[x],
+mh0->Sqrt[x],
 a^2 y - 2 a b c + b^2 x -> \[CapitalDelta],
 a^2(-y) + 2 a b c - b^2 x -> - \[CapitalDelta],
 a^2 (D-2)y - 2 a b c (D-2) + b^2 (D-2)x-> (D-2)\[CapitalDelta],
@@ -36,7 +43,7 @@ Gij[i_, j_] := PList[\[Rho],\[Sigma]][[i]] PZ[\[Mu],\[Rho]]PG[\[Nu],\[Sigma]]PLi
 Gphys = ((Table[Gij[i,j], {i,3}, {j,3}]/.variables//FullSimplify)/.variables2/.{a^2(D-3) y + 2 a b c - b^2 x-> a^2 (D-2) y - \[CapitalDelta]}//Simplify)/.{-a^2 (D-2) y + 2 a b c (D-2) - b^2 (D-2) x -> -(D-2)\[CapitalDelta]}//Simplify
 
 
-inverseG =(Inverse[GphysD/.variables2/.{a^2 (D-3)y -> -a^2 y + a^2(D-2)y}/.variables2]//Simplify)/.{a^2 (D-2)y - 2 a b c (D-2) + b^2 (D-2)x-> (D-2)\[CapitalDelta]}//FullSimplify
+inverseG =(Inverse[Gphys/.variables2/.{a^2 (D-3)y -> -a^2 y + a^2(D-2)y}/.variables2]//Simplify)/.{a^2 (D-2)y - 2 a b c (D-2) + b^2 (D-2)x-> (D-2)\[CapitalDelta]}//FullSimplify
 
 
 (* Checking inverseG.G = I *)

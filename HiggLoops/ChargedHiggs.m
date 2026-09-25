@@ -18,36 +18,29 @@ SMP->True, LorentzIndexNames->{\[Mu], \[Nu], \[Rho], \[Sigma], \[Delta], \[Lambd
 
 
 
-F1self = P1[\[Mu],\[Nu]]ampsSelf // Contract//Expand;
-F2self = P2[\[Mu],\[Nu]] ampsSelf // Contract//Expand;
-F3self = P3[\[Mu],\[Nu]] ampsSelf // Contract//Expand;
+F1self = ((((Proj[\[Mu],\[Nu]][[1]])ampsSelf // Contract//Expand)//.variables)/.Kinematics2)/.variables
+F2self = (((Proj[\[Mu],\[Nu]][[2]] ampsSelf // Contract//Expand)//.variables)/.Kinematics2)/.variables
+F3self = (((Proj[\[Mu],\[Nu]][[3]] ampsSelf) // Contract//Expand//.variables)/.Kinematics2)/.variables
 
 
-
-
-f1selfreduced =F1self/.squareloopterms/.looplineardependences;
+f1selfreduced =F1self/.squareloopterms/.looplineardependences
 f2selfreduced = F2self/.squareloopterms/.looplineardependences;
 f3selfreduced = F3self/.squareloopterms/.looplineardependences;
 
 
-
-f1selfres = f1selfreduced//TID[#, l, ToPaVe->True]&//Simplify;
+f1selfres = f1selfreduced//TID[#, l, ToPaVe->True]&//Simplify
 f2selfres = f2selfreduced// TID[#, l, ToPaVe->True]&//Simplify;
 f3selfres = f3selfreduced// TID[#, l, ToPaVe->True]& //Simplify;
 
 
-
-f1self =  f1selfres/.Kinematics/.InvariantKinematics;
-f2self =  f2selfres/.Kinematics/.InvariantKinematics;
-f3self =  f3selfres/.Kinematics/.InvariantKinematics;
-
-
+f1self =  f1selfres/.Kinematics2/.variables/.variables2
+f2self =  f2selfres/.Kinematics2/.variables/.variables2
+f3self =  f3selfres/.Kinematics2/.variables/.variables2
 
 
 f1Hself = Total[f1self]//Simplify
 f2Hself = Total[f2self]//Simplify
-f3Hself = Total[f3self]//Simplify
-
+f3Hself = (Total[f3self]//Simplify)//.variables2//Simplify
 
 
 Clear[F1self, F2self, F3self, f1selfreduced, f2selfreduced, f3selfreduced, f1selfres, f2selfres, f3selfres, f1self, f2self, f3self];
@@ -74,16 +67,14 @@ SMP->True, LorentzIndexNames->{\[Mu],\[Nu],\[Rho], \[Delta], \[Lambda]},  SUNInd
 
 
 
-F1tr = P1[\[Mu],\[Nu]]ampsTriangle // Contract//Expand;
-F2tr = P2[\[Mu],\[Nu]] ampsTriangle // Contract//Expand;
-F3tr = P3[\[Mu],\[Nu]] ampsTriangle // Contract//Expand;
+F1tr = (Proj[\[Mu],\[Nu]][[1]]ampsTriangle // Contract//Expand)//.variables;
+F2tr = (Proj[\[Mu],\[Nu]][[2]] ampsTriangle // Contract//Expand)/.variables;
+F3tr = (Proj[\[Mu],\[Nu]][[3]] ampsTriangle // Contract//Expand)/.variables;
 
 
-
-f1trreduced =F1tr/.squareloopterms/.looplineardependences;
-f2trreduced = F2tr/.squareloopterms/.looplineardependences;
-f3trreduced = F3tr/.squareloopterms/.looplineardependences;
-
+f1trreduced =F1tr/.squareloopterms/.looplineardependences/.variables;
+f2trreduced = F2tr/.squareloopterms/.looplineardependences/.variables;
+f3trreduced = F3tr/.squareloopterms/.looplineardependences/.variables;
 
 
 f1trres = f1trreduced//TID[#, l, ToPaVe->True]&//Simplify;
@@ -91,17 +82,14 @@ f2trres = f2trreduced// TID[#, l, ToPaVe->True]&//Simplify;
 f3trres = f3trreduced// TID[#, l, ToPaVe->True]& //Simplify;
 
 
-
-f1tr =  f1trres/.Kinematics/.InvariantKinematics;
-f2tr =  f2trres/.Kinematics/.InvariantKinematics;
-f3tr =  f3trres/.Kinematics/.InvariantKinematics;
-
+f1tr =  f1trres/.variables;
+f2tr =  f2trres/.variables;
+f3tr =  f3trres/.variables;
 
 
-f1Htr = Total[f1tr]//Simplify
-f2Htr = Total[f2tr]//Simplify
-f3Htr = Total[f3tr]//Simplify
-
+f1Htr = Total[f1tr]//Simplify;
+f2Htr = Total[f2tr]//Simplify;
+f3Htr = Total[f3tr]//Simplify;
 
 
 Clear[F1tr, F2tr, F3tr, f1trreduced, f2trreduced, f3trreduced, f1trres, f2trres, f3trres, f1tr, f2tr, f3tr];
@@ -136,14 +124,14 @@ SMP->True, LorentzIndexNames->{\[Mu], \[Nu], \[Rho], \[Sigma], \[Delta], \[Lambd
 
 
 
-F1box = P1[\[Mu],\[Nu]] ampsBoxes // Contract // Expand;
-F2box = P2[\[Mu],\[Nu]] ampsBoxes // Contract // Expand;
-F3box = P3[\[Mu],\[Nu]] ampsBoxes // Contract // Expand;
+F1box = Proj[\[Mu],\[Nu]][[1]] ampsBoxes // Contract;
+F2box = Proj[\[Mu],\[Nu]][[1]] ampsBoxes // Contract;
+F3box = Proj[\[Mu],\[Nu]][[1]] ampsBoxes // Contract;
 
 
-f1boxreduced =F1box/.squareloopterms/.looplineardependences;
-f2boxreduced = F2box/.squareloopterms/.looplineardependences;
-f3boxreduced = F3box/.squareloopterms/.looplineardependences;
+f1boxreduced =F1box/.squareloopterms/.looplineardependences/.variables//Expand;
+f2boxreduced = F2box/.squareloopterms/.looplineardependences/.variables//Expand;
+f3boxreduced = F3box/.squareloopterms/.looplineardependences/.variables//Expand;
 
 
 
@@ -153,9 +141,9 @@ f3boxres = f3boxreduced// TID[#, l, ToPaVe->True]& //Simplify;
 
 
 
-f1box =  f1boxres/.Kinematics/.InvariantKinematics;
-f2box =  f2boxres/.Kinematics/.InvariantKinematics;
-f3box =  f3boxres/.Kinematics/.InvariantKinematics;
+f1box =  f1boxres/.variables;
+f2box =  f2boxres/.variables;
+f3box =  f3boxres/.variables;
 
 
 
@@ -168,19 +156,63 @@ Clear[F1box, F2box, F3box, f1boxreduced, f2boxreduced, f3boxreduced, f1boxres, f
 
 
 
-f1H = f1Hself + f1Htr + f1Hbox//Simplify;
-f2H = f2Hself + f2Htr + f2Hbox//Simplify;
-f3H = f3Hself + f3Htr + f3Hbox//Simplify;
+(* ReducedSelfH *)
+WFSelfWithH = DiagramSelect[WFSelfHDiagrams, !FreeQ[LoopFields[##], S[5]]&];
+WFSelfH = DiagramExtract[WFSelfWithH, {1,2,5}];
+WFSelfHWu = DiagramComplement[WFSelfwithH, WFSelfH];
+WFSelfGWu = DiagramComplement[WFSelfHDiagrams, WFSelfwithH];
+Paint[WFSelfH, Numbering->Simple, SheetHeader->None];
+
+
+Clear[ampsReduced]
+ampsReduced = CreateFeynAmp[WFSelfH, Truncated->True, GaugeRules->{_FAGaugeXi->1}];
+ampsReduced = FCFAConvert[ampsReduced, IncomingMomenta->{q}, OutgoingMomenta->{k1, k2, k3},
+LoopMomenta-> {l},  ChangeDimension->D, UndoChiralSplittings->True, DropSumOver->True , TransversePolarizationVectors->{k1, k2}, List->True, 
+SMP->True, LorentzIndexNames->{\[Mu], \[Nu], \[Rho], \[Sigma], \[Delta], \[Lambda]}, SUNIndexNames->{a,b,c,d,f,e,g,h},SUNFIndexNames-> {w,v,z,x,m,n,q,r}
+]/.ConventionNotation//Contract//FCTraceFactor//Simplify;
 
 
 
-PaVeUVPart[f1H]/.D->4 - 2\[Epsilon]//Series[#, {\[Epsilon], 0, -1}]&
-PaVeUVPart[f2H]/.D->4 - 2\[Epsilon]//Series[#, {\[Epsilon], 0, -1}]&
-PaVeUVPart[f3H]/.D->4 - 2\[Epsilon]//Series[#, {\[Epsilon], 0, -1}]&
+F1reduced = Proj[\[Mu],\[Nu]][[1]] ampsReduced // Contract;
+F2reduced = Proj[\[Mu],\[Nu]][[1]] ampsReduced // Contract;
+F3reduced = Proj[\[Mu],\[Nu]][[1]] ampsReduced // Contract;
 
 
 
+f1reducedreduced =F1reduced/.squareloopterms/.looplineardependences/.variables//Expand;
+f2reducedreduced = F2reduced/.squareloopterms/.looplineardependences/.variables//Expand;
+f3reducedreduced = F3reduced/.squareloopterms/.looplineardependences/.variables//Expand;
 
+
+
+f1reduceds = f1reducedreduced//TID[#, l, ToPaVe->True]&//Simplify;
+f2reduceds = f2reducedreduced// TID[#, l, ToPaVe->True]&//Simplify;
+f3reduceds = f3reducedreduced// TID[#, l, ToPaVe->True]& //Simplify;
+
+
+
+f1rr =  ((f1reduceds//PropagatorDenominatorExplicit)//SMPToSymbol)/.variables/.variables2;
+f2rr =  ((f2reduceds//PropagatorDenominatorExplicit)//SMPToSymbol)/.variables/.variables2;
+f3rr =  ((f3reduceds//PropagatorDenominatorExplicit)//SMPToSymbol)/.variables/.variables2;
+
+
+f1Hrr = Total[f1rr]//Simplify
+f2Hrr = Total[f2rr]//Simplify
+f3Hrr = Total[f3rr]//Simplify
+
+
+Clear[F1reduced, F2reduced, F3reduced, f1reducedreduced, f2reducedreduced, f3reducedreduced, f1rr, f2rr, f3rr];
+
+
+f1H = f1Hself + f1Htr + f1Hbox + f1Hrr//Simplify;
+f2H = f2Hself + f2Htr + f2Hbox + f2Hrr//Simplify;
+f3H = f3Hself + f3Htr + f3Hbox + f3Hrr//Simplify;
+
+
+
+PaVeUVPart[f1H]/.D->4 - 2\[Epsilon]//Series[#, {\[Epsilon], 0, -1}]&//Simplify
+PaVeUVPart[f2H]/.D->4 - 2\[Epsilon]//Series[#, {\[Epsilon], 0, -1}]&//Simplify
+PaVeUVPart[f3H]/.D->4 - 2\[Epsilon]//Series[#, {\[Epsilon], 0, -1}]&//Simplify
 
 
 data = <|"f1Hself"-> f1Hself, 
@@ -191,7 +223,10 @@ data = <|"f1Hself"-> f1Hself,
 		"f3Htr"->f3Htr, 
 		"f1Hbox"->f1Hbox, 
 		"f2Hbox"->f2Hbox, 
-		"f3Hbox"->f3Hbox|>;
+		"f3Hbox"->f3Hbox,
+		"f1Hrr"->f1Hrr,
+		"f2Hrr"->f2Hrr,
+		"f3Hrr"->f3Hrr|>;
 Save["HiggLoops.m", data]
 
 

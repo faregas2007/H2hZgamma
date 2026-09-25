@@ -1,6 +1,6 @@
 Calculate process $H \rightarrow hZ$ gamma in 2HDM. The works is the extension to $H->h \gamma \gamma$ of the following reference
 ## Usage
-Run InitialSetup.m then run ChargedHiggs.m for f1H, f2H and f3H.
+Run InitialSetup.m then DualProjector.m then run ChargedHiggs.m for f1H, f2H and f3H, ...
 
 The amplitude is saved in HiggLoops.m. It can retrieval for example,
 
