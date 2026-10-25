@@ -1,0 +1,8 @@
+# Scan over s = p^2 (GeV^2) up to sqrt(s) ~ 775 GeV. The top-pair threshold 4 mt^2 = 1.19e5 is inside.
+# Symbols were bound to the card when the code was generated (models/*.model): nothing to bind here.
+card      ../cards/sm.slha
+mudim     29756.25            # mu^2 = mt^2
+scan s    linspace  1000  600000  300
+# the A0/B0 ones; the C0/D0 ones are in thresholds.scan and euclid.scan
+amplitudes vacpol_fermion vacpol_smp bubble_unequal \
+           tadpole_top_toy fa_vacpol_sigmaT

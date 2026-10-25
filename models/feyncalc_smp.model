@@ -1,0 +1,31 @@
+(* models/feyncalc_smp.model -- FeynCalc's SMP["..."] parameters, so exports need no conversion.
+   The names are those listed by SMP[] in the FeynCalc manual. Each is defined through the symbols of sm.model.
+   Complex entries (SMP["V_ud", I], ...) are not defined here: add them in your own model file, e.g.
+       SMP["V_ud", I]  = SLHA[VCKM, 1, 1] + I SLHA[IMVCKM, 1, 1]                                      *)
+
+SMP["m_Z"]     = mz
+SMP["m_W"]     = mw
+SMP["m_H"]     = mh
+SMP["m_t"]     = mt
+SMP["m_b"]     = mb
+SMP["m_tau"]   = mtau
+SMP["m_e"]     = me
+SMP["m_mu"]    = mmu
+SMP["G_F"]     = GF
+SMP["alpha_s"] = alphas
+SMP["alpha_fs"] = alphaEM
+SMP["e"]       = e
+SMP["g_s"]     = gs
+
+(* weak mixing in the on-shell scheme, from the W and Z masses -- redefine these if you use another scheme *)
+SMP["cos_W"]   = mw/mz
+SMP["sin_W"]   = Sqrt[1 - mw^2/mz^2]
+SMP["g_W"]     = SMP["e"]/SMP["sin_W"]
+SMP["g'_W"]    = SMP["e"]/SMP["cos_W"]
+SMP["Q_u"]     = 2/3
+SMP["Q_d"]     = -1/3
+
+(* FeynCalc writes the UV pole as SMP["Delta_UV"] (seen in FeynCalc's own tutorial output after FCHideEpsilon;
+   it is not in the SMP[] list of the manual version checked). It is bound to the runner's Delta, so explicit
+   Delta terms join the divergent column. Check that FeynCalc's Delta_UV and LoopTools' Delta mean the same.   *)
+SMP["Delta_UV"] = Runner[Delta]

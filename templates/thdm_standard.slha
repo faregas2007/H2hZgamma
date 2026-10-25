@@ -1,0 +1,25 @@
+# 2HDM, STANDARD template: only blocks and indices fixed by the SLHA conventions (SLHA2: Higgs masses by PDG code, tan(beta) in
+# MINPAR, the h-H mixing angle in ALPHA). Copy, change the numbers, keep the structure. models/sm.model and models/thdm.model read these.
+# Units: GeV and radians. A CP-conserving 2HDM with softly broken Z2; Type I/II only change the fermion couplings.
+# Benchmark: tan(beta) = 2, cos(beta-alpha) = 0.05 (close to alignment), m_H = m_A = m_H+ = 500, M = 480:
+#            bounded from below, all |lambda_i| < 4 pi (checked).
+BLOCK SMINPUTS               # Standard Model inputs
+     1     1.279520E+02      # alpha_em^-1(MZ), MSbar
+     2     1.166380E-05      # G_F
+     3     1.184000E-01      # alpha_s(MZ), MSbar
+     4     9.118760E+01      # MZ, pole
+     5     4.180000E+00      # mb(mb), MSbar
+     6     1.725000E+02      # mt, pole
+     7     1.776860E+00      # mtau, pole
+    11     5.109989E-04      # me, pole
+    13     1.056584E-01      # mmu, pole
+BLOCK MASS                   # masses keyed by PDG code
+    24     8.037900E+01      # MW
+    25     1.252500E+02      # h0, the light CP-even Higgs (125 GeV)
+    35     5.000000E+02      # H0, the heavy CP-even Higgs
+    36     5.000000E+02      # A0, the CP-odd Higgs
+    37     5.000000E+02      # H+, the charged Higgs
+BLOCK MINPAR                 # input parameters
+     3     2.000000E+00      # tan(beta) = v2/v1
+BLOCK ALPHA                  # h-H mixing angle alpha (radians): h = -sin(alpha) rho1 + cos(alpha) rho2
+    -4.136267522E-01         # alpha; cos(beta-alpha) = 0.05

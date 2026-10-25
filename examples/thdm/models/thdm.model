@@ -1,0 +1,78 @@
+(* models/thdm.model -- Two-Higgs-doublet model OVERLAY (CP conserving, softly broken Z2), the notation of the FeynArts THDM model.
+
+   The model of the thdm workspace (examples/thdm). It is applied after the library models (models/), so it may redefine their names: here  alpha  is the h-H mixing angle (\[Alpha]), not alpha_em.
+
+   Parameters (templates/thdm_*.slha):
+       MASS    25 = m_h   35 = m_H   36 = m_A   37 = m_H+       standard SLHA PDG codes for the Higgs bosons
+       MINPAR   3 = tan(beta)                                      standard SLHA
+       ALPHA       alpha, the h-H mixing angle (radians)           standard SLHA block
+       THDM     1 = lambda_5                                       custom block: the one parameter no standard block has
+   (M^2 = m12^2/(sb cb) = m_A^2 + lambda_5 v^2;  lambda_1..4 follow from the masses, alpha, beta and M^2.)                     *)
+
+Inputs[a, b]               (* scalar products of the external momenta:  a = k3.k1,  b = k3.k2  (c = k1.k2 follows, below) *)
+
+
+(* ---- angles ---------------------------------------------------------------------------------------------------------------- *)
+beta  = ArcTan[SLHA[MINPAR, 3]]
+alpha = SLHA[ALPHA]                                       (* overrides alpha_em of sm.model: the 2HDM \[Alpha] *)
+Subscript[theta, W] = ArcCos[Subscript[m, W]/mz]          (* on-shell weak mixing angle:  cos(theta_W) = mW/mZ *)
+
+(* ---- masses (notation of the amplitudes) ------------------------------------------------------------------------------------- *)
+Subscript[m, W] = SLHA[MASS, 24]
+Subscript[m, t] = SLHA[SMINPUTS, 6]
+Subscript[m, Z] = mz
+Subscript[m, h] = SLHA[MASS, 25]
+Subscript[m, H] = SLHA[MASS, 35]
+Subscript[m, Subscript[A, 0]] = SLHA[MASS, 36]
+Subscript[m, Hp] = SLHA[MASS, 37]
+Subscript[lambda, 5] = SLHA[THDM, 1]
+
+(* ---- on-shell external legs ---------------------------------------------------------------------------------------------------
+   h0 (k1) and Z (k2) are on shell, the photon (k3) is massless:   x = k1^2 = m_h^2,   y = k2^2 = m_Z^2,   k3^2 = 0.
+   (The Mathematica rules  Subscript[m, h0] -> Sqrt[x],  mZ -> Sqrt[y]  say the same from the other side: here the card is the
+   single source and x, y follow from it.)                                                                                       *)
+x = Subscript[m, h]^2
+y = Subscript[m, Z]^2
+Subscript[m, h0] = Subscript[m, h]
+mh0 = Subscript[m, h]
+mh  = Subscript[m, h]
+mZ  = mz
+Delta = a^2 y - 2 a b c + b^2 x                           (* the Gram determinant of the three momenta *)
+
+(* Momentum conservation for H0(k1+k2+k3) -> h0(k1) Z(k2) gamma(k3):  (k1+k2+k3)^2 = m_H^2  =>  2a + 2b + 2c = m_H^2 - x - y,
+   so c = k1.k2 is not independent. (If your process is different, replace this line, or declare c in Inputs[...] and `set` it.) *)
+c = (Subscript[m, H]^2 - x - y)/2 - a - b
+
+(* ---- FeynArts' THDM names -> the notation above (the Mathematica rule list ConventionNotation) ------------------------------- *)
+EL    = e
+cosW  = Cos[Subscript[theta, W]]
+sinW  = Sin[Subscript[theta, W]]
+mW    = Subscript[m, W]
+mt    = Subscript[m, t]
+CAB   = Cos[alpha + beta]
+CBA   = Cos[beta - alpha]
+SAB   = Sin[alpha + beta]
+SBA   = Sin[beta - alpha]
+S2B   = Sin[2 beta]
+SA    = Sin[alpha]
+CA    = Cos[alpha]
+C2B   = Cos[2 beta]
+S2A   = Sin[2 alpha]
+C2A   = Cos[2 alpha]
+SB    = Sin[beta]
+CB    = Cos[beta]
+Mh0   = Subscript[m, h]
+MA0   = Subscript[m, Subscript[A, 0]]
+MHH   = Subscript[m, H]
+MHp   = Subscript[m, Hp]
+Lambda5 = Subscript[lambda, 5]
+
+(* ---- trilinear scalar couplings -------------------------------------------------------------------------------------------------
+   g_hhH0 = d^3 V/dh^2 dH   and   g_h0H0H0 = d^3 V/dh dH^2     (the vertex is -i g), derived from the 2HDM potential and
+   verified numerically against the potential.  v = 2 mW sin(theta_W)/e is the tree-level on-shell
+   value: change `vev` here if you prefer v from G_F.                                                                              *)
+vev = 2 Subscript[m, W] Sin[Subscript[theta, W]]/e
+Msq = Subscript[m, Subscript[A, 0]]^2 + Subscript[lambda, 5] vev^2
+
+Subscript[g, hhH0] = Cos[beta - alpha]/(vev Sin[2 beta]) ((2 Subscript[m, h]^2 + Subscript[m, H]^2 - 3 Msq) Sin[2 alpha] + Msq Sin[2 beta])
+Subscript[g, HoldForm[Subscript[h, 0] Subscript[H, 0] Subscript[H, 0]]] = -Sin[beta - alpha]/(vev Sin[2 beta]) ((Subscript[m, h]^2 + 2 Subscript[m, H]^2 - 3 Msq) Sin[2 alpha] - Msq Sin[2 beta])

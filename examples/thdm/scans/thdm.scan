@@ -1,0 +1,9 @@
+# 2HDM: H0 -> h0 Z gamma through an intermediate h0*/H0* -> Z gamma top loop (examples/thdm/amplitudes/).
+# Kinematics: k1 = h0 (x = m_h^2), k2 = Z (y = m_Z^2), k3 = photon (k3^2 = 0), all outgoing; a = k3.k1, b = k3.k2; c = k1.k2 follows from
+# (k1+k2+k3)^2 = m_H^2 (models/thdm.model). With a = 5000 the physical (Dalitz) region is 193 < b < 41850: the Gram determinant
+# Delta vanishes at its edges and the amplitude has a 1/Delta there, so the scan stays inside.
+card      ../cards/thdm.slha
+mudim     29756.25            # mu^2 = mt^2
+scan b    linspace  1000  30000  200
+set  a    5000
+amplitudes *

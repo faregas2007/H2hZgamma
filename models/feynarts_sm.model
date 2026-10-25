@@ -1,0 +1,14 @@
+(* models/feynarts_sm.model -- FCGV["..."] placeholders for FeynArts model parameters.
+   FeynCalc's FCFAConvert writes FeynArts parameter names as FCGV["MT"], ... and can rename them to SMP.
+   The names depend on the FeynArts model file: these follow the usual SM.mod spelling and have NOT been
+   checked against a real export. Edit or add lines to match yours.                                     *)
+
+FCGV["MT"] = mt
+FCGV["MB"] = mb
+FCGV["MW"] = mw
+FCGV["MZ"] = mz
+FCGV["MH"] = mh
+FCGV["EL"] = e
+FCGV["GS"] = gs
+FCGV["SW"] = SMP["sin_W"]
+FCGV["CW"] = SMP["cos_W"]

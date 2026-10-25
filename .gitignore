@@ -152,3 +152,51 @@ $RECYCLE.BIN/
 __pycache__/
 *.py[cod]
 *Spy.class
+# ---- build output (every cmake --preset / -B folder; scan CSVs and plots land inside it by default) ----------------
+/build/
+/build-*/
+/cmake-build-*/
+/out/
+
+# ---- LoopTools: downloaded archive, unpacked source, build log and installation (cmake/AmpflowLoopTools.cmake) -------
+/third_party/
+
+# ---- results, if AMPFLOW_DATA_DIR / AMPFLOW_PLOT_DIR were pointed into the source tree --------------------------------
+# (anchored to the top level, so docs/images/*.png and any folder named data/ elsewhere stay tracked)
+/data/
+/plots/
+
+# ---- CMake files that must never be committed when someone configures in the source folder ---------------------------
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+compile_commands.json
+CMakeUserPresets.json
+
+# ---- Python (the plotting package) ---------------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---- compiled objects, if anything is ever built outside build/ -----------------------------------------------------------
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.exe
+
+# ---- editors and OS ----------------------------------------------------------------------------------------------------------
+.vscode/
+.idea/
+.cache/
+*.swp
+*~
+.DS_Store
+Thumbs.db

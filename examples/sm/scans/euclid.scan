@@ -1,0 +1,11 @@
+# C0 / D0. Euclidean region: every invariant <= 0, so the Feynman-parameter integrals are
+# real and smooth and can be checked by plain quadrature. p1..p4 and t are held fixed.
+card      ../cards/sm.slha
+mudim     29756.25
+scan s    linspace  -300000  -1000  150
+set  t    -50000
+set  p1   -2000
+set  p2   -5000
+set  p3   -3000
+set  p4   -4000
+amplitudes triangle_euclid box_massless_legs box_offshell_unequal lbl_like_mix

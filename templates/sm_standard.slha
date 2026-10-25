@@ -1,0 +1,16 @@
+# STANDARD template: only blocks and indices fixed by the SLHA specification.
+# Copy this file, change the numbers, keep the structure. models/sm.model reads exactly these entries.
+# Units: GeV and GeV^-2. Values are illustrative inputs, not a fit.
+BLOCK SMINPUTS               # Standard Model inputs
+     1     1.279520E+02      # alpha_em^-1(MZ), MSbar
+     2     1.166380E-05      # G_F
+     3     1.184000E-01      # alpha_s(MZ), MSbar
+     4     9.118760E+01      # MZ, pole
+     5     4.180000E+00      # mb(mb), MSbar
+     6     1.725000E+02      # mt, pole
+     7     1.776860E+00      # mtau, pole
+    11     5.109989E-04      # me, pole
+    13     1.056584E-01      # mmu, pole
+BLOCK MASS                   # masses keyed by PDG code
+    24     8.037900E+01      # MW
+    25     1.252500E+02      # mh

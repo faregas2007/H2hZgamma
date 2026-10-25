@@ -1,0 +1,9 @@
+# 2HDM, CUSTOM template: the one parameter of the potential that no standard SLHA block carries.
+# Bound to the symbol Subscript[lambda, 5] (= Lambda5 in FeynArts) in models/thdm.model:
+#     Subscript[lambda, 5] = SLHA[THDM, 1]
+# Soft Z2 breaking:  M^2 = m12^2/(sin(beta) cos(beta)) = m_A^2 + lambda_5 v^2.  Given the masses, alpha and beta, lambda_5 (or M^2) fixes
+# lambda_1 ... lambda_4:  l1 = [mH^2 ca^2 + mh^2 sa^2 - M^2 sb^2]/(v^2 cb^2),  l2 = [mH^2 sa^2 + mh^2 ca^2 - M^2 cb^2]/(v^2 sb^2),
+#                         l3 = [(mH^2-mh^2) sa ca/(sb cb) + 2 mH+^2 - M^2]/v^2,  l4 = [M^2 + mA^2 - 2 mH+^2]/v^2.
+# Here M = 480 GeV and v = 2 mW sin(theta_W)/e = 242.2459 GeV, so lambda_5 = (M^2 - m_A^2)/v^2.
+BLOCK THDM                   # custom block: parameters of the 2HDM potential
+     1    -3.339973715E-01   # lambda_5

@@ -1,0 +1,27 @@
+(* models/sm.model -- STANDARD template: Standard Model symbols bound to the FIXED blocks of the SLHA.
+   The block/index meanings come from the SLHA(2) specification, so this file does not change per project.
+   Values live in the card (templates/sm_standard.slha); this file only says where each symbol is read.
+
+   SMINPUTS: 1 alpha_em^-1(MZ) MSbar | 2 G_F | 3 alpha_s(MZ) MSbar | 4 MZ pole | 5 mb(mb) MSbar
+             6 mt pole | 7 mtau pole | 11 me pole | 13 mmu pole
+   MASS (keyed by PDG code): 24 = W, 25 = Higgs                                                   *)
+
+Inputs[s, t, u, p1, p2, p3, p4]   (* kinematic variables the runner supplies: scan one, 'set' the others *)
+
+alphaEM = 1/SLHA[SMINPUTS, 1]  (* the card holds the INVERSE coupling *)
+alpha   = alphaEM              (* the name amplitudes use; a model overlay may redefine `alpha` (2HDM: the mixing angle),
+                                  nothing below uses it, they all use alphaEM *)
+GF      = SLHA[SMINPUTS, 2]
+alphas  = SLHA[SMINPUTS, 3]
+mz      = SLHA[SMINPUTS, 4]
+mb      = SLHA[SMINPUTS, 5]    (* mb(mb) in MSbar, not a pole mass *)
+mt      = SLHA[SMINPUTS, 6]
+mtau    = SLHA[SMINPUTS, 7]
+me      = SLHA[SMINPUTS, 11]
+mmu     = SLHA[SMINPUTS, 13]
+mw      = SLHA[MASS, 24]
+mh      = SLHA[MASS, 25]
+
+e       = Sqrt[4 Pi alphaEM]   (* derived: a definition may be any expression *)
+gs      = Sqrt[4 Pi alphas]
+mudim   = Runner[Mu2]          (* the renormalisation scale mu^2 from the scan file *)

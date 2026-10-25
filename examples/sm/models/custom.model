@@ -1,0 +1,13 @@
+(* models/custom.model -- CUSTOM template: symbols of YOUR amplitudes that no standard block carries.
+   They are read from a block of your own (here AMPPAR, see templates/custom_block.slha).
+   Rules of thumb:
+     * pick a block name the SLHA spec does not use, index entries 1, 2, 3, ...
+     * one line per symbol here, one entry per symbol in the card, the same comment on both
+     * a symbol may also just be a name for something standard (mf = mt below)                    *)
+
+Nc  = SLHA[AMPPAR, 1]        (* number of colours *)
+Qf  = SLHA[AMPPAR, 2]        (* electric charge of the fermion in the loop *)
+
+mf  = mt                     (* vacpol_fermion: the loop fermion is the top quark *)
+m1  = mt                     (* bubble_unequal: the two masses are t and b *)
+m2  = mb

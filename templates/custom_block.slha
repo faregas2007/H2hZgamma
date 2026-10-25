@@ -1,0 +1,9 @@
+# CUSTOM template: a block of your own for inputs the standard blocks do not have.
+# SLHA allows extra blocks: use a name the specification does not use, indices 1, 2, 3, ...
+# Each entry is bound to a symbol in a model file (see models/custom.model):
+#     Nc = SLHA[AMPPAR, 1]
+#     Qf = SLHA[AMPPAR, 2]
+# Keep the comments in step with the model file: they are the only documentation of the entry.
+BLOCK AMPPAR                 # extra inputs of the amplitudes
+     1     3.000000E+00      # Nc, number of colours
+     2     6.666666666666667E-01      # Qf, charge of the loop fermion (top quark)

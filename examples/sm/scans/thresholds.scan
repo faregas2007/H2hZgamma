@@ -1,0 +1,5 @@
+# C0 / D0. s > 0 across the top-pair threshold 4 mt^2 = 1.19e5: complex values.
+card      ../cards/sm.slha
+mudim     29756.25
+scan s    linspace  1000  600000  300
+amplitudes hgg_fermion_triangle vertex_mixed triangle_toy

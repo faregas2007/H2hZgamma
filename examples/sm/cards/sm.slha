@@ -1,0 +1,18 @@
+# Parameter card used by the demo scan: the STANDARD blocks (templates/sm_standard.slha)
+# followed by the CUSTOM block (templates/custom_block.slha).
+BLOCK SMINPUTS               # Standard Model inputs
+     1     1.279520E+02      # alpha_em^-1(MZ), MSbar
+     2     1.166380E-05      # G_F
+     3     1.184000E-01      # alpha_s(MZ), MSbar
+     4     9.118760E+01      # MZ, pole
+     5     4.180000E+00      # mb(mb), MSbar
+     6     1.725000E+02      # mt, pole
+     7     1.776860E+00      # mtau, pole
+    11     5.109989E-04      # me, pole
+    13     1.056584E-01      # mmu, pole
+BLOCK MASS                   # masses keyed by PDG code
+    24     8.037900E+01      # MW
+    25     1.252500E+02      # mh
+BLOCK AMPPAR                 # extra inputs of the amplitudes
+     1     3.000000E+00      # Nc, number of colours
+     2     6.666666666666667E-01      # Qf, charge of the loop fermion (top quark)

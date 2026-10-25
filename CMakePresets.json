@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "LoopTools (A0, B0, C0, D0); downloaded and built into third_party/ if not found",
+      "binaryDir": "${sourceDir}/build/default"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default"
+    }
+  ]
+}
