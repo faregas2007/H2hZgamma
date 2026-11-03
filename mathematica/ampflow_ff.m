@@ -41,9 +41,6 @@ AFLorentzCoefficients[tensor_, structures_List] := Module[{gram, rhs},
   Together /@ LinearSolve[gram, rhs]
 ];
 
-(* Contraction of a tensor with a momentum on one index:  AFContractWith[tensor, k, mu]  =  k_mu tensor^{mu ...}   *)
-AFContractWith[tensor_, mom_, idx_] := Contract[tensor FVD[mom, idx]];
-
 
 (* ---------------------------------------------------------------------------------------------------------------
    D -> 4 with the rational terms.
@@ -99,7 +96,8 @@ AFShapeCheck[name_String, result_, shape_, vars_List] := Module[{ratio = Simplif
    expression is checked: it may only contain numbers, symbols, + * ^, the scalar integrals A0 B0 C0 D0 and FeynCalc
    parameter atoms SMP["..."] / FCGV["..."]. Anything else (Pair, Momentum, DiracGamma, PaVe, D, Epsilon, ...) means a
    step was forgotten, and nothing is written.                                                                       *)
-AFAllowedHeads = {Plus, Times, Power, Rational, Complex, A0, B0, C0, D0, SMP, FCGV, Subscript};
+AFAllowedHeads = {Plus, Times, Power, Rational, Complex, A0, B0, C0, D0, SMP, FCGV, Subscript,
+  Sin, Cos, Tan, Sec, Csc, Cot, HoldForm};     (* trigonometric functions of the mixing angles; HoldForm only labels coupling names, fc2lt ignores it *)
 
 AFExportAmplitude[file_String, expr_, header_String] := Module[{heads, bad, text},
   heads = DeleteDuplicates[Cases[expr, f_Symbol[___] :> f, {0, Infinity}]];
