@@ -1,5 +1,4 @@
 (* ::Package:: *)
-
 (* 00_dual_projector_check.m
 
    Checks the algebra of ampflow_dual.m. Needs FeynCalc only (no FeynArts, no model, a few seconds):

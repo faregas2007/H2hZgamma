@@ -1,0 +1,9 @@
+# topology / H / Single: position in the PDF, number for DiagramExtract[diags, {number}], key
+1  diagram #419  key -
+2  diagram #421  key -
+3  diagram #439  key -
+4  diagram #441  key -
+5  diagram #445  key -
+6  diagram #455  key -
+7  diagram #457  key -
+8  diagram #461  key -

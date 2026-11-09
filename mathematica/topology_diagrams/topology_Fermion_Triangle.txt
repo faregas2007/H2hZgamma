@@ -1,0 +1,17 @@
+# topology / Fermion / Triangle: position in the PDF, number for DiagramExtract[diags, {number}], key
+1  diagram #81  key -
+2  diagram #82  key -
+3  diagram #83  key -
+4  diagram #84  key -
+5  diagram #129  key -
+6  diagram #130  key -
+7  diagram #131  key -
+8  diagram #132  key -
+9  diagram #157  key -
+10  diagram #158  key -
+11  diagram #181  key -
+12  diagram #182  key -
+13  diagram #183  key -
+14  diagram #184  key -
+15  diagram #209  key -
+16  diagram #210  key -

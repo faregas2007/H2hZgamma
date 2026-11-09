@@ -1,0 +1,7 @@
+# topology / Fermion / Box: position in the PDF, number for DiagramExtract[diags, {number}], key
+1  diagram #233  key -
+2  diagram #234  key -
+3  diagram #293  key -
+4  diagram #294  key -
+5  diagram #353  key -
+6  diagram #354  key -

@@ -4,7 +4,7 @@
 
    Load after ampflow_dual.m; ampflow_h0hzg.m uses it for the "Fermion" group.
 
-   Order of the work for ONE diagram (AFFermionProjectRawList):
+   Order of the work for ONE diagram (AFFermionProjectRaw):
      colour    SUNSimplify on the colour deltas / traces of the quark loop           (Nc comes out as SUNN -> Nc)
      trace     Dirac traces in D dimensions with a chosen gamma5 scheme              (AFTraceEvaluate)
      project   contract with the three vectors Pi_m^{mu nu} of the dual projector     (CP-even: no Levi-Civita in them)
@@ -73,14 +73,36 @@ AFDropLoopEps[expr_, loop_: l] :=
    Colour: the quark loop. FCFAConvert has to be called with SUNIndexNames / SUNFIndexNames so the colour indices are
    SUNFDelta's; here they are summed. SUNN is FeynCalc's N_c.                                                              *)
 
-AFFermionColour[amp_] := SUNSimplify[amp, Explicit -> False] /. SUNN -> Nc;
+(* SUNSimplify aborts the whole kernel when it cannot separate the colour objects from the rest ("Failed to properly isolate the
+   color algebraic expressions"). CheckAbort turns that into an ordinary failure of THIS diagram, and the message names what is
+   in the way: any function other than the SUN heads that has a colour index among its arguments. *)
+AFFermionColour[amp_] := Module[{r, bad},
+  r = CheckAbort[AFStep["colour", SUNSimplify[amp, Explicit -> False]], $Failed];
+  If[r === $Failed,
+    bad = DeleteDuplicates[Cases[amp,
+      e : (h_[___]) /; !MemberQ[{SUNFDelta, SUNDelta, SUNF, SUND, SUNT, SUNTF, SUNIndex, SUNFIndex, Plus, Times, Power, List}, h] &&
+        !FreeQ[Rest[e], _SUNIndex | _SUNFIndex], {0, Infinity}]];
+    AFFail["SUNSimplify aborted: colour isolation failed. Objects with a colour index inside: ",
+      StringTake[ToString[Take[bad, UpTo[3]], InputForm], UpTo[600]],
+      "   (", Length[bad], " such objects; ", LeafCount[amp], " leaves)"]];
+  r /. SUNN -> Nc
+];
 
 
 (* ---------------------------------------------------------------------------------------------------------------------
    Traces
    --------------------------------------------------------------------------------------------------------------------- *)
 
-Options[AFTraceEvaluate] = {"Scheme" -> "NDR", "PreSimplify4" -> False};
+Options[AFTraceEvaluate] = {"Scheme" -> "NDR", "PreSimplify4" -> False, "DropOddGamma5" -> True};
+
+(* Terms of a trace with an ODD number of gamma5 give Levi-Civita tensors: with the CP-even projection the eps scalar contains the loop
+   momentum and vanishes (header of this file); they belong to the CP-odd structure F4. FeynCalc's NDR leaves such a trace
+   unevaluated when the gammas are D-dimensional (that was the failure of the first trial run), so they are removed here, term by term,
+   independently of the scheme. Terms with an even number are untouched and go to TR. *)
+afDropOddGamma5[x_] := Module[{e = Expand[x]},
+  If[Head[e] === Plus,
+    Total[Select[List @@ e, EvenQ[Count[#, DiracGamma[5], {0, Infinity}]] &]],
+    If[EvenQ[Count[e, DiracGamma[5], {0, Infinity}]], e, 0]]];
 
 AFTraceEvaluate[amp_, OptionsPattern[]] := Module[{a = amp},
   AFGammaScheme[OptionValue["Scheme"]];
@@ -88,41 +110,45 @@ AFTraceEvaluate[amp_, OptionsPattern[]] := Module[{a = amp},
   If[OptionValue["PreSimplify4"],
     a = DiracSimplify[ChangeDimension[a, 4], InsideDiracTrace -> True];
     a = ChangeDimension[a, D]];
-  a = a /. DiracTrace -> TR;
+  If[OptionValue["DropOddGamma5"], a = a /. DiracTrace[x_, o___] :> DiracTrace[afDropOddGamma5[x], o]];
+  a = AFEvaluateTraces[a];
   Contract[a]
+];
+
+(* Every DiracTrace must be gone afterwards: TR first, then DiracSimplify with DiracTraceEvaluate -> True. A trace that survives is an
+   error (the diagram fails with the first leftover trace in the message), because TID would treat it as an opaque factor and the
+   result would be zero or wrong. *)
+AFEvaluateTraces[amp_] := Module[{a = amp, left},
+  If[FreeQ[a, DiracTrace], Return[a]];
+  a = a /. DiracTrace[x_, ___] :> TR[x];
+  If[!FreeQ[a, DiracTrace],
+    a = DiracSimplify[a, DiracTraceEvaluate -> True]];
+  left = Cases[a, _DiracTrace, {0, Infinity}];
+  If[left =!= {},
+    AFFail["traces not evaluated (", Length[left], " left, gamma5 scheme ", $AFGammaScheme, "), first: ",
+      ToString[First[left], InputForm]]];
+  a
 ];
 
 
 (* ---------------------------------------------------------------------------------------------------------------------
-   One diagram, or a list of them, to the raw projections (before G^-1).
+   One diagram to its raw projections (before G^-1).
 
-   amps   FeynCalc amplitudes from FCFAConvert (List -> True), momenta already in k1, k2, k3, open indices mu, nu.
-   Returns the list {Pi_1 . A, Pi_2 . A, Pi_3 . A} reduced to PaVe functions (summed over the diagrams in AFFermionProjectRaw);
-   the caller multiplies with G^-1 (AFDualGramInverse[]) once.                                                             *)
+   amp  one FeynCalc amplitude from FCFAConvert (momenta k1, k2, k3, open indices mu, nu, colour indices named).
+   Returns {Pi_1 . A, Pi_2 . A, Pi_3 . A} reduced to PaVe functions. The caller sums over diagrams and multiplies with G^-1
+   (AFDualGramInverse[]) once.                                                                                              *)
 
-Options[AFFermionProjectRawList] = Join[Options[AFTraceEvaluate], {"Progress" -> True}];
+Options[AFFermionProjectRaw] = {"Scheme" -> "NDR", "PreSimplify4" -> False};
 
-(* one raw projection per diagram (the caller may group them, e.g. by topology class) *)
-AFFermionProjectRawList[amps_List, mu_, nu_, loop_, opts : OptionsPattern[]] := Module[{i = 0, n = Length[amps], t0},
-  Table[
-    i++; t0 = AbsoluteTime[];
-    With[{r = AFDualProjectLoopRaw[
-        AFTraceEvaluate[AFFermionColour[a], FilterRules[{opts}, Options[AFTraceEvaluate]]], mu, nu, loop, AFDropLoopEps]},
-      If[OptionValue["Progress"], AFLog["fermion diagram ", i, "/", n, " done in ", Round[AbsoluteTime[] - t0], " s"]];
-      r],
-    {a, amps}]
-];
-
-Options[AFFermionProjectRaw] = Options[AFFermionProjectRawList];
-AFFermionProjectRaw[amps_List, mu_, nu_, loop_, opts : OptionsPattern[]] := Total[AFFermionProjectRawList[amps, mu, nu, loop, opts]];
-
+AFFermionProjectRaw[amp_, mu_, nu_, loop_, opts : OptionsPattern[]] :=
+  AFDualProjectLoopRaw[AFTraceEvaluate[AFFermionColour[amp], opts], mu, nu, loop, AFDropLoopEps];
 
 (* The same diagrams through different gamma5 schemes. Returns <|"Forms" -> <|scheme -> {F1, F2, F3}|>, "Differences" -> {...}|>
    (each scheme against the first one, simplified). PaVe functions are the common basis, so a vanishing difference is
    an exact statement; a nonzero one should be a rational (PaVe-free) term, which is the scheme dependence to be understood
    (finite counterterms of the scheme) before one of the results is used.                                                    *)
 AFFermionSchemeCheck[amps_List, mu_, nu_, loop_, schemes_List : {"NDR", "Larin"}] := Module[{forms},
-  forms = Association[(# -> AFDualGramInverse[] . AFFermionProjectRaw[amps, mu, nu, loop, "Scheme" -> #, "Progress" -> False]) & /@ schemes];
+  forms = Association[Table[s -> AFDualGramInverse[] . Total[AFFermionProjectRaw[#, mu, nu, loop, "Scheme" -> s] & /@ amps], {s, schemes}]];
   AFGammaScheme["NDR"];
   <|"Forms" -> forms, "Differences" -> Table[s -> Simplify[forms[First[schemes]] - forms[s]], {s, Rest[schemes]}]|>
 ];

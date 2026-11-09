@@ -117,18 +117,63 @@ AFDualProject[tensor_, mu_, nu_] := Module[{pis, raw},
 (* Same, for an amplitude that still contains the loop momentum: contract with the three vectors Pi_m (CP-even, no epsilon in them),
    apply `prep` (e.g. AFDropLoopEps) to each contraction, reduce with TID, express the scalar products of k1..k3. Returns the
    three RAW projections; the caller sums over diagrams first and multiplies with AFDualGramInverse[] once.                *)
+(* ---- the steps for ONE contraction  Pi_m . A, in this order (each is timed at VERBOSE=2) --------------------------------------
+     1  contract with Pi_m, `prep` (dropping loop epsilons for fermions)
+     2  tree propagators (no loop momentum, e.g. the 1/(k2+k3)^2 - m^2 of reducible diagrams) written out as scalar products,
+        and the kinematics k1^2 = x, k2^2 = y, k3^2 = 0, k1.k3 = a, ...: the coefficients are rational in a b c x y
+     3  ApartFF: scalar products l.k_i in the numerators are written with the loop propagators, linearly dependent denominators
+        are partial-fractioned; then the scaleless integrals are dropped.  Afterwards TID has only short pieces and few
+        tensor structures left.  ($AFDualApartFF = False: skip, TID on the whole expression as before)
+     4  TID to PaVe
+     5  kinematics again: it acts on the arguments of the PaVe functions (A0, B0, C0, D0)                                       *)
+$AFDualApartFF = True;
+
+afDualSplitFAD[ps_List, loop_] := Module[{tree, lp},
+  (* the loop momentum may stand inside a sum, Momentum[l + k2, D], so test for the symbol, not for Momentum[l, ___]:
+     the first version turned (l + k2)^2 - m^2 into an explicit denominator and ApartFF and TID then failed on it *)
+  tree = Select[ps, FreeQ[#, loop] &];
+  lp = Select[ps, !FreeQ[#, loop] &];
+  If[tree === {}, FeynAmpDenominator @@ ps,
+    FeynAmpDenominatorExplicit[FeynAmpDenominator @@ tree] * If[lp === {}, 1, FeynAmpDenominator @@ lp]]
+];
+afDualTreeExplicit[e_, loop_] := e /. FeynAmpDenominator[ps__] :> afDualSplitFAD[{ps}, loop];
+
+afDualApart[e_, loop_] := Module[{r},
+  If[FreeQ[e, FeynAmpDenominator], Return[e]];
+  (* ApartFF can abort the kernel (FeynCalc fatal error) or fail with a message: CheckAbort/Check make that an ordinary fallback to
+     TID on the expression as it was; VERBOSE=2 shows FeynCalc's own messages and the input *)
+  r = CheckAbort[
+    If[$AFVerbose >= 2, Check[ApartFF[e, {loop}], $Failed], Quiet[Check[ApartFF[e, {loop}], $Failed]]], $Failed];
+  If[r === $Failed,
+    AFLog["  ApartFF failed or aborted; TID on the expression without it. Input was: ",
+      StringTake[ToString[e, InputForm], UpTo[500]]];
+    Return[e]];
+  If[NameQ["FeynCalc`FCLoopRemoveScaleless"],
+    r = CheckAbort[FCLoopRemoveScaleless[r, {loop}], AFLog["  FCLoopRemoveScaleless aborted, skipped"]; r]];
+  r
+];
+
+afDualProjectOne[tensor_, pi_, loop_, prep_] := Module[{e},
+  e = AFStep["contract", prep[Contract[tensor pi]]];
+  e = AFStep["tree props, kin", AFDualKin[afDualTreeExplicit[e, loop]]];
+  If[$AFDualApartFF, e = AFStep["ApartFF", afDualApart[e, loop]]];
+  e = AFStep["TID", TID[e, loop, ToPaVe -> True]];
+  AFStep["kin (PaVe args)", AFDualKin[e]]
+];
+
 AFDualProjectLoopRaw[tensor_, mu_, nu_, loop_, prep_: Identity] := Module[{pis, r},
   pis = AFDualPiVectors[mu, nu];
-  r = Table[AFDualKin[TID[prep[Contract[tensor pis[[m]]]], loop, ToPaVe -> True]], {m, 3}];
+  r = Table[afDualProjectOne[tensor, pis[[m]], loop, prep], {m, 3}];
   (* TID first; afterwards no loop momentum may be left (so rules such as l.k -> 0, (l.k)(l.k') -> l^2 k.k'/D would act on nothing) *)
   If[!FreeQ[r, Momentum[loop, ___]], AFFail["AFDualProjectLoopRaw: loop momentum ", loop, " is still present after TID (an integral TID could not reduce)"]];
   r
 ];
 
 (* CP-odd structure eps^{mu nu k1 k2}: its Gram element is eps.eps = 2 (c^2 - x y) (the k2 k2 term of PZ drops out), and
-   it is orthogonal to P1..P3 (every contraction has a repeated momentum). Only meaningful in 4 dimensions.             *)
+   it is orthogonal to P1..P3 (every contraction has a repeated momentum). Only meaningful in 4 dimensions: the epsilon is the
+   4-dimensional LC, not LCD, because FeynCalc contracts two D-dimensional epsilons with an extra factor (D-2)(D-3)/2.     *)
 AFDualProjectOdd[tensor_, mu_, nu_] :=
-  AFDualKin[Contract[tensor LCD[mu, nu][k1, k2]]]/(2 (c^2 - x y));
+  AFDualKin[Contract[tensor LC[mu, nu][k1, k2]]]/(2 (c^2 - x y));
 
 
 (* ---------------------------------------------------------------------------------------------------------------------
@@ -148,31 +193,25 @@ AFDualSumSquared[F_List, F4_: 0, dim_: 4] := Module[{g, s},
 (* ---------------------------------------------------------------------------------------------------------------------
    Delta: factor exact powers of the Gram determinant out of numerator and denominator.
 
-   AFPutDelta[expr] writes  expr = Delta^n * rest  where Delta = a^2 y - 2 a b c + b^2 x  is divided out only when it
-   divides EXACTLY (no remainder), so the result is always equal to expr; it is a presentation step (the model file
-   defines Delta). Functions A0..D0 are treated as constants.                                                             *)
+   AFPutDelta[coeff] writes  coeff = Delta^n * rest  where Delta = a^2 y - 2 a b c + b^2 x  is divided out only when it divides EXACTLY
+   (no remainder), so the result always equals coeff; it is a presentation step (the model file defines Delta). Meant for the
+   coefficients of a linear form (no A0..D0 inside); anything that is not a rational function of x, y, a, b, c is returned as it is. *)
 
 afDualPeel[p_] := Module[{red, n = 0, q = p},
   If[p === 0 || p === 1, Return[{0, p}]];
   While[True,
     red = Quiet[Check[PolynomialReduce[q, {AFDualDeltaPoly}, {x, y, c, a, b}], $Failed]];
     If[red === $Failed || red[[2]] =!= 0 || red[[1, 1]] === 0, Break[]];
-    q = red[[1, 1]]; n++;
-  ];
+    q = red[[1, 1]]; n++];
   {n, q}
 ];
 
-AFPutDelta[expr_] := Module[{tog, num, den, fs, ph, rules, back, nn, qn, nd, qd, res},
-  tog = Together[expr];
-  fs = DeleteDuplicates[Cases[tog, _A0 | _B0 | _C0 | _D0, {0, Infinity}]];
-  ph = Table[Unique["afDualPh"], {Length[fs]}];
-  rules = Thread[fs -> ph]; back = Thread[ph -> fs];
-  {num, den} = {Numerator[tog], Denominator[tog]} /. rules;
-  If[!PolynomialQ[num, {x, y, c, a, b}] || !PolynomialQ[den, {x, y, c, a, b}], Return[expr]];
+AFPutDelta[coeff_] := Module[{tog = Together[coeff], num, den, nn, qn, nd, qd},
+  {num, den} = {Numerator[tog], Denominator[tog]};
+  If[!PolynomialQ[num, {x, y, c, a, b}] || !PolynomialQ[den, {x, y, c, a, b}], Return[coeff]];
   {nn, qn} = afDualPeel[Expand[num]];
   {nd, qd} = afDualPeel[Expand[den]];
-  res = \[CapitalDelta]^(nn - nd) qn/qd;
-  res /. back
+  \[CapitalDelta]^(nn - nd) qn/qd
 ];
 
 
@@ -211,12 +250,14 @@ AFDualSelfTest[] := Module[{res = {}, add, zeroQ, dl, closed, g, det, inv, mu, n
   add["eps^{mu nu k1 k2} . Pi_m = 0 (CP-even and CP-odd do not mix)", And @@ (zeroQ /@ odd)];
 
   f4 = afF4;
-  add["Proj_odd recovers F4 (Gram element 2 (c^2 - x y))", zeroQ[AFDualProjectOdd[f4 eps, mu, nu] - f4]];
+  add["Proj_odd recovers F4 (Gram element 2 (c^2 - x y))", zeroQ[AFDualProjectOdd[f4 LC[mu, nu][k1, k2], mu, nu] - f4]];
 
   ward = Table[AFDualKin[Contract[AFDualStructures[mu, nu][[i]] FVD[k3, nu]]], {i, 3}];
   add["photon Ward identity k3_nu P_i^{mu nu} = 0", And @@ (zeroQ /@ ward)];
 
-  add["AFPutDelta leaves the expression unchanged", zeroQ[AFPutDelta[inv[[2, 2]]] - inv[[2, 2]]]];
+  (* AFPutDelta returns an expression in the symbol Delta; it equals the input once Delta is replaced by its polynomial *)
+  add["AFPutDelta leaves the expression unchanged",
+    And @@ Flatten[Table[zeroQ[(AFPutDelta[inv[[i, j]]] /. \[CapitalDelta] -> dl) - inv[[i, j]]], {i, 3}, {j, i, 3}]]];
 
   And @@ res
 ];

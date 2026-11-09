@@ -1,0 +1,13 @@
+# topology / HGWu / Self: position in the PDF, number for DiagramExtract[diags, {number}], key
+1  diagram #411  key -
+2  diagram #412  key -
+3  diagram #415  key -
+4  diagram #416  key -
+5  diagram #448  key -
+6  diagram #449  key -
+7  diagram #464  key -
+8  diagram #465  key -
+9  diagram #473  key -
+10  diagram #474  key -
+11  diagram #481  key -
+12  diagram #482  key -

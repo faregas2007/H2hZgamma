@@ -1,0 +1,17 @@
+# topology / GWu / Single: position in the PDF, number for DiagramExtract[diags, {number}], key
+1  diagram #420  key -
+2  diagram #422  key -
+3  diagram #423  key -
+4  diagram #424  key -
+5  diagram #440  key -
+6  diagram #442  key -
+7  diagram #443  key -
+8  diagram #444  key -
+9  diagram #446  key -
+10  diagram #447  key -
+11  diagram #456  key -
+12  diagram #458  key -
+13  diagram #459  key -
+14  diagram #460  key -
+15  diagram #462  key -
+16  diagram #463  key -

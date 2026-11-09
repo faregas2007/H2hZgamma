@@ -1,0 +1,13 @@
+# topology / H / Triangle: position in the PDF, number for DiagramExtract[diags, {number}], key
+1  diagram #1  key -
+2  diagram #2  key -
+3  diagram #75  key -
+4  diagram #76  key -
+5  diagram #85  key -
+6  diagram #86  key -
+7  diagram #89  key -
+8  diagram #90  key -
+9  diagram #159  key -
+10  diagram #160  key -
+11  diagram #211  key -
+12  diagram #212  key -
