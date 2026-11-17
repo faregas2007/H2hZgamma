@@ -1,3 +1,13 @@
+# Usage H2hZgamma
+For full run (run all stages, stage 1 and stage 2 for cell combining)
+```Mathematica
+VERBOSE=2 AF_LAMBDA5=TwoM2OverV2 AF_MODE=full wolframscript -file 03_h0_hzgamma.m
+```
+For trial run (only takes 2 diagrams each groups)
+```
+VERBOSE=2 AF_LAMBDA5=TwoM2OverV2 AF_MODE=trial wolframscript -file 03_h0_hzgamma.m
+```
+
 # mathematica/ — from Feynman diagrams to an amplitude fc2lt can read
 
 Two FeynArts + FeynCalc scripts that take a process from the diagrams to **one form factor**, check it, and export
